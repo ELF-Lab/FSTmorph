@@ -506,6 +506,7 @@ SplitForm object is returned.</p></div>
                 preverb_lexicon = (self.conf[&#34;prefix_root&#34;] # This can also be the prenoun lexicon depending on paradigm
                                    if &#34;prefix_root&#34; in self.conf
                                    else None)
+                enclitic_lexicon = &#34;EncliticRoot&#34;
                 pos_stem_lexicon = f&#34;{self.conf[&#39;pos&#39;]}Stems&#34; # E.g. VerbStems
                 paradigm_stem_lexicon = f&#34;{paradigm}_Stems&#34; # E.g. VTA_Stems
                 inflection_class_lexicon = f&#34;{paradigm}_Class={klass}_Boundary&#34;
@@ -545,7 +546,7 @@ SplitForm object is returned.</p></div>
                     LexcEntry(ending_lexicon,
                               &#34;&#34;.join(tags),
                               parts.suffix,
-                              &#34;#&#34;)
+                              enclitic_lexicon or &#34;#&#34;)
                 ]
                 paths.append(path)
             else:
@@ -790,6 +791,7 @@ entries.</p></div>
             preverb_lexicon = (self.conf[&#34;prefix_root&#34;] # This can also be the prenoun lexicon depending on paradigm
                                if &#34;prefix_root&#34; in self.conf
                                else None)
+            enclitic_lexicon = &#34;EncliticRoot&#34;
             pos_stem_lexicon = f&#34;{self.conf[&#39;pos&#39;]}Stems&#34; # E.g. VerbStems
             paradigm_stem_lexicon = f&#34;{paradigm}_Stems&#34; # E.g. VTA_Stems
             inflection_class_lexicon = f&#34;{paradigm}_Class={klass}_Boundary&#34;
@@ -829,7 +831,7 @@ entries.</p></div>
                 LexcEntry(ending_lexicon,
                           &#34;&#34;.join(tags),
                           parts.suffix,
-                          &#34;#&#34;)
+                          enclitic_lexicon or &#34;#&#34;)
             ]
             paths.append(path)
         else:

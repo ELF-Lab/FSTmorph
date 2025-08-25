@@ -65,21 +65,6 @@ el.replaceWith(d);
         print(&#34; &#34;.join(multichar_symbols), file=lexc_file)
         print(&#34;&#34;, file=lexc_file)
 
-    @staticmethod
-    def write_root_lexc(root_lexc_filename,pos_root_lexicons):
-        &#34;&#34;&#34;Write the `LEXICON Root` into a lexc_file. Each POS has their own
-           custom root lexicon (e.g. VerbRoot and NounRoot) which the
-           master root lexicon needs to reference.
-
-        &#34;&#34;&#34;
-        with open(root_lexc_filename,&#34;w&#34;) as root_lexc_file:
-            LexcFile.write_multichar_symbols(LexcPath.multichar_symbols,
-                                            root_lexc_file)
-            print(&#34;LEXICON Root&#34;, file=root_lexc_file)
-            for lexicon_name in pos_root_lexicons:
-                print(f&#34;{lexicon_name} ;&#34;, file=root_lexc_file)
-            print(&#34;&#34;, file=root_lexc_file)
-        
     def __init__(self,
                  conf:dict,
                  source_path:str,
@@ -281,33 +266,6 @@ def write_multichar_symbols(multichar_symbol_set, lexc_file):
     print(&#34;&#34;, file=lexc_file)</code></pre>
 </details>
 <div class="desc"><p>Write the <code>Multichar_Symbols</code> section into a lexc_file</p></div>
-</dd>
-<dt id="FSTmorph.src.lexicon.LexcFile.write_root_lexc"><code class="name flex">
-<span>def <span class="ident">write_root_lexc</span></span>(<span>root_lexc_filename, pos_root_lexicons)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@staticmethod
-def write_root_lexc(root_lexc_filename,pos_root_lexicons):
-    &#34;&#34;&#34;Write the `LEXICON Root` into a lexc_file. Each POS has their own
-       custom root lexicon (e.g. VerbRoot and NounRoot) which the
-       master root lexicon needs to reference.
-
-    &#34;&#34;&#34;
-    with open(root_lexc_filename,&#34;w&#34;) as root_lexc_file:
-        LexcFile.write_multichar_symbols(LexcPath.multichar_symbols,
-                                        root_lexc_file)
-        print(&#34;LEXICON Root&#34;, file=root_lexc_file)
-        for lexicon_name in pos_root_lexicons:
-            print(f&#34;{lexicon_name} ;&#34;, file=root_lexc_file)
-        print(&#34;&#34;, file=root_lexc_file)</code></pre>
-</details>
-<div class="desc"><p>Write the <code>LEXICON Root</code> into a lexc_file. Each POS has their own
-custom root lexicon (e.g. VerbRoot and NounRoot) which the
-master root lexicon needs to reference.</p></div>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -511,7 +469,6 @@ configuration file. Otherwise, write to the file given by
 <li><code><a title="FSTmorph.src.lexicon.LexcFile.read_lexemes_from_database" href="#FSTmorph.src.lexicon.LexcFile.read_lexemes_from_database">read_lexemes_from_database</a></code></li>
 <li><code><a title="FSTmorph.src.lexicon.LexcFile.write_lexc" href="#FSTmorph.src.lexicon.LexcFile.write_lexc">write_lexc</a></code></li>
 <li><code><a title="FSTmorph.src.lexicon.LexcFile.write_multichar_symbols" href="#FSTmorph.src.lexicon.LexcFile.write_multichar_symbols">write_multichar_symbols</a></code></li>
-<li><code><a title="FSTmorph.src.lexicon.LexcFile.write_root_lexc" href="#FSTmorph.src.lexicon.LexcFile.write_root_lexc">write_root_lexc</a></code></li>
 </ul>
 </li>
 </ul>

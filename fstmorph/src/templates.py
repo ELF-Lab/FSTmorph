@@ -297,7 +297,7 @@ def get_add_harvested_multichar_symbols(multichar_symbols):
         return pretty_join(sorted(multichar_symbols))
     return add_harvested_multichar_symbols
 
-def render_root_lexicon(source_path, lexc_path):
+def render_root_lexicon(source_path, lexc_path, pos_root_lexicons):
     """ Render a root lexicon Jinja template into lexc code."""
     template_dir = dirname(expanduser(source_path))
     env = Environment(loader=FileSystemLoader(template_dir))
@@ -309,5 +309,7 @@ def render_root_lexicon(source_path, lexc_path):
     }
     jinja_template.globals.update(func_dict)
     template_string = jinja_template.render()
+    # List all the root lexicons for each POS (one per config file)
+    template_string = template_string.replace("LEXICON Root", "LEXICON Root" + "\n" + (" ;\n").join(pos_root_lexicons) + " ;")
     with open(pjoin(lexc_path, template_file.replace(".j2","")), "w") as f:        
         print(template_string, file=f)

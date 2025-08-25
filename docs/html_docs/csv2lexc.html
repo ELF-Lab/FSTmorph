@@ -42,9 +42,8 @@ el.replaceWith(d);
 <li>Lexical database files in CSV format (these live in <code>database_paths</code>)</li>
 <li>Configuration files for different word classes (these live in <code>source_path</code>/config)</li>
 </ul>
-<p><code>config_files</code> is a comma-separated list of .json configuration file names read from
-the directory <code>source_path</code>/config</p>
-<p><code>source_path</code> gives the path the directory containing morphological information,
+<p><code>config_files</code> is a comma-separated list of full paths to .json configuration files</p>
+<p><code>source_path</code> gives the path of the directory containing morphological information,
 plus phonological rules.
 An example for Ojibwe is OjibweMorph.</p>
 <p><code>database_paths</code> gives the path to 1+ directories where CSVs containing lexical information
@@ -133,11 +132,11 @@ matter when concatenating.</p>
             info(&#34;Reading prefix spreadsheets from directory:&#34;,
                  f&#34;{config[&#39;pv_source_path&#39;]}&#34;)
             info(f&#34;Writing lexc output to directory {lexc_path}&#34;)
-            pos_root_lexicons.add(config[&#34;prefix_root&#34;])
             render_pre_element_lexicon(config,source_path,lexc_path)
-            
+
+    render_enclitic_lexicon(source_path, lexc_path, database_paths)
     render_root_lexicon(pjoin(source_path,&#34;templates&#34;,&#34;root.lexc.j2&#34;),
-                        lexc_path)</code></pre>
+                        lexc_path, pos_root_lexicons)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>

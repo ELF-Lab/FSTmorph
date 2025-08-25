@@ -17,21 +17,6 @@ class LexcFile:
         print(" ".join(multichar_symbols), file=lexc_file)
         print("", file=lexc_file)
 
-    @staticmethod
-    def write_root_lexc(root_lexc_filename,pos_root_lexicons):
-        """Write the `LEXICON Root` into a lexc_file. Each POS has their own
-           custom root lexicon (e.g. VerbRoot and NounRoot) which the
-           master root lexicon needs to reference.
-
-        """
-        with open(root_lexc_filename,"w") as root_lexc_file:
-            LexcFile.write_multichar_symbols(LexcPath.multichar_symbols,
-                                            root_lexc_file)
-            print("LEXICON Root", file=root_lexc_file)
-            for lexicon_name in pos_root_lexicons:
-                print(f"{lexicon_name} ;", file=root_lexc_file)
-            print("", file=root_lexc_file)
-        
     def __init__(self,
                  conf:dict,
                  source_path:str,
