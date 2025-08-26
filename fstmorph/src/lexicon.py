@@ -28,7 +28,7 @@ class LexcFile:
                  regular:bool):
         """Initialize the lexicon using a configuration file. Parameters: 
            * `conf` configuration 
-           * `source_path` path to OjibweMorph repo
+           * `source_path` path to morphological source repo (e.g., OjibweMorph)
            * `lexc_path` destination directory for lexc code
            * `database_paths` paths to lexical data CSVs (with lemmas/stems)
            * `lexical_data_to_exclude` path to CSV listing lexical data to NOT include
@@ -36,7 +36,7 @@ class LexcFile:
            * `regular` whether this is a lexc file for regular or irregular lexemes 
         """
         self.conf = conf
-        self.root_lexicon = conf["root_lexicon"]
+        self.root_lexicon = conf["pos"] + "Root"
         self.source_path = source_path        
         self.lexc_path = lexc_path
         self.regular = regular

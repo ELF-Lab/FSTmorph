@@ -1,3 +1,4 @@
+# Call from inside docs/
 pdoc --force -c syntax_highlighting=True --html ../FSTmorph/
 rm -r -f ./html_docs
 mkdir ./html_docs/

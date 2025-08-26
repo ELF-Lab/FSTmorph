@@ -51,7 +51,8 @@ def csv2lexc(config_files, source_path, lexc_path, database_paths, lexical_data_
         config["database_src_dirs"] = database_paths
         config["append_alt_tag"] = alt_tag
         info(json.dumps(config, indent=2),force=False)
-        pos_root_lexicons.add(config["root_lexicon"])
+        root_lexicon = config["pos"] + "Root" # "NounRoot", "ProperNounRoot", etc.
+        pos_root_lexicons.add(root_lexicon)
         
         # We'll first compile regular paradigms into a LEXC file 
         info("Reading spreadsheets for regular paradigms from directory:",
@@ -73,7 +74,7 @@ def csv2lexc(config_files, source_path, lexc_path, database_paths, lexical_data_
         if config['irregular_lexc_file'] != "None":
             info("Reading spreadsheets for irregular paradigms from directory:",
                  f"{pjoin(source_path,config['morphology_source_path'])}")
-            pos_root_lexicons.add(config["root_lexicon"] + "Irregular")
+            pos_root_lexicons.add(root_lexicon + "Irregular")
             irregular_lexicon = LexcFile(config,
                                          source_path,
                                          lexc_path,

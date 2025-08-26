@@ -213,7 +213,7 @@ class LexcPath:
         multichar_symbols.
 
         """
-        self.root_lexicon = conf["root_lexicon"]
+        self.root_lexicon = conf["pos"] + "Root"
         self.row = row
         self.conf = conf
         self.regular = regular

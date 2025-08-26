@@ -76,7 +76,7 @@ el.replaceWith(d);
                  regular:bool):
         &#34;&#34;&#34;Initialize the lexicon using a configuration file. Parameters: 
            * `conf` configuration 
-           * `source_path` path to OjibweMorph repo
+           * `source_path` path to morphological source repo (e.g., OjibweMorph)
            * `lexc_path` destination directory for lexc code
            * `database_paths` paths to lexical data CSVs (with lemmas/stems)
            * `lexical_data_to_exclude` path to CSV listing lexical data to NOT include
@@ -84,7 +84,7 @@ el.replaceWith(d);
            * `regular` whether this is a lexc file for regular or irregular lexemes 
         &#34;&#34;&#34;
         self.conf = conf
-        self.root_lexicon = conf[&#34;root_lexicon&#34;]
+        self.root_lexicon = conf[&#34;pos&#34;] + &#34;Root&#34;
         self.source_path = source_path        
         self.lexc_path = lexc_path
         self.regular = regular
@@ -241,7 +241,7 @@ el.replaceWith(d);
 </details>
 <div class="desc"><p>Initialize the lexicon using a configuration file. Parameters:
 * <code>conf</code> configuration
-* <code>source_path</code> path to OjibweMorph repo
+* <code>source_path</code> path to morphological source repo (e.g., OjibweMorph)
 * <code>lexc_path</code> destination directory for lexc code
 * <code>database_paths</code> paths to lexical data CSVs (with lemmas/stems)
 * <code>lexical_data_to_exclude</code> path to CSV listing lexical data to NOT include
