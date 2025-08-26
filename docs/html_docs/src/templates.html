@@ -129,40 +129,6 @@ to a Jinja template. We need a specialized function because
 information about file paths is not accessible from the
 template.</p></div>
 </dd>
-<dt id="FSTmorph.src.templates.get_all_pre_element_tags"><code class="name flex">
-<span>def <span class="ident">get_all_pre_element_tags</span></span>(<span>source_dir)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_all_pre_element_tags(source_dir):
-    &#34;&#34;&#34;Return a function which harvests all preverb/prenoun tags from a
-       spreadsheet.  The function can be called from a jinja template
-       file. We need a specialized function because information about
-       file paths is not accessible from the template.
-
-    &#34;&#34;&#34;    
-    def all_pre_element_tags(tag_transformation=&#39;lambda x:x&#39;):
-        pre_element_tags = set()
-        tag_transformation = eval(tag_transformation)
-        for fn in listdir(path=source_dir):
-            if fn.endswith(&#34;.csv&#34;):
-                df = pd.read_csv(pjoin(source_dir,fn))
-                df.Tag = df.Tag.transform(tag_transformation)
-                pre_element_tags.update(zip(df[&#34;Tag&#34;],df[&#34;PV&#34;]))
-        pre_element_tags = sorted(list(pre_element_tags))
-        return pretty_join([f&#34;{tag}/{pv}+&#34; for tag, pv in pre_element_tags])
-    
-    return all_pre_element_tags</code></pre>
-</details>
-<div class="desc"><p>Return a function which harvests all preverb/prenoun tags from a
-spreadsheet.
-The function can be called from a jinja template
-file. We need a specialized function because information about
-file paths is not accessible from the template.</p></div>
-</dd>
 <dt id="FSTmorph.src.templates.get_allomorph"><code class="name flex">
 <span>def <span class="ident">get_allomorph</span></span>(<span>pv, order_filter)</span>
 </code></dt>
@@ -451,8 +417,8 @@ getting cluttered with loads of unnecessary disallow flags.</p></div>
     prefix_database = &#34;None&#34; # Could be a file in the lex source
     jinja_template = env.get_template(template_file)
     func_dict = {
-        &#34;all_pre_element_tags&#34;:
-        get_all_pre_element_tags(csv_src_path),
+        # &#34;all_pre_element_tags&#34;:
+        # get_all_pre_element_tags(csv_src_path),
         &#34;load_enclitic_csv&#34;:
         get_load_enclitic_csv(csv_src_path),
         &#34;load_pre_element_database&#34;:
@@ -490,8 +456,8 @@ getting cluttered with loads of unnecessary disallow flags.</p></div>
                        else &#34;None&#34;)
     jinja_template = env.get_template(template_file)
     func_dict = {
-        &#34;all_pre_element_tags&#34;:
-        get_all_pre_element_tags(csv_src_path),
+        # &#34;all_pre_element_tags&#34;:
+        # get_all_pre_element_tags(csv_src_path),
         &#34;load_pre_element_csv&#34;:
         get_load_pre_element_csv(csv_src_path),
         &#34;load_pre_element_database&#34;:
@@ -561,7 +527,6 @@ getting cluttered with loads of unnecessary disallow flags.</p></div>
 <li><code><a title="FSTmorph.src.templates.check_na" href="#FSTmorph.src.templates.check_na">check_na</a></code></li>
 <li><code><a title="FSTmorph.src.templates.get_add_harvested_multichar_symbols" href="#FSTmorph.src.templates.get_add_harvested_multichar_symbols">get_add_harvested_multichar_symbols</a></code></li>
 <li><code><a title="FSTmorph.src.templates.get_add_lexeme_multichar_symbols" href="#FSTmorph.src.templates.get_add_lexeme_multichar_symbols">get_add_lexeme_multichar_symbols</a></code></li>
-<li><code><a title="FSTmorph.src.templates.get_all_pre_element_tags" href="#FSTmorph.src.templates.get_all_pre_element_tags">get_all_pre_element_tags</a></code></li>
 <li><code><a title="FSTmorph.src.templates.get_allomorph" href="#FSTmorph.src.templates.get_allomorph">get_allomorph</a></code></li>
 <li><code><a title="FSTmorph.src.templates.get_generate_pre_element_sub_lexicons" href="#FSTmorph.src.templates.get_generate_pre_element_sub_lexicons">get_generate_pre_element_sub_lexicons</a></code></li>
 <li><code><a title="FSTmorph.src.templates.get_load_enclitic_csv" href="#FSTmorph.src.templates.get_load_enclitic_csv">get_load_enclitic_csv</a></code></li>
