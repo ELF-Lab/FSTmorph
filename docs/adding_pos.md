@@ -22,7 +22,7 @@ The following outlines how to add support for a new POS to the FST, using the ex
             - `missing_tag_marker`
             - `missing_form_marker`
             - `multichar_symbols`
-            - `template_path`
+            - `pre_element_template_path`
 2. Create a paradigm spreadsheet in the morphological source.
     - For example: create `PROPER_NOUN.csv` in one of the `OtherSpreadsheets/` folders in `OjibweMorph`.
     - There's more info in [the docs](morphological_source.md#morphological-paradigms-csv), but basically there are six mandatory columns for this spreadsheet: `Paradigm`, `Class`, `Lemma`, `Stem`, `Form1Surface`, and `Form1Split`.

@@ -86,9 +86,9 @@ def csv2lexc(config_files, source_path, lexc_path, database_paths, lexical_data_
             info(f"Writing lexc output to {config['irregular_lexc_file']}")
             irregular_lexicon.write_lexc()
 
-        if config["template_path"] != "None":
+        if config["pre_element_template_path"] != "None":
             info("Reading prefix template file from:",
-                 f"{config['template_path']}")
+                 f"{config['pre_element_template_path']}")
             info("Reading prefix spreadsheets from directory:",
                  f"{config['pre_element_source_path']}")
             info(f"Writing lexc output to directory {lexc_path}")

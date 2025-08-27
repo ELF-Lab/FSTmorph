@@ -236,9 +236,9 @@ def get_add_lexeme_multichar_symbols(config):
 def render_pre_element_lexicon(config,source_path,lexc_path):
     """ Render a preverb or prenoun Jinja template into lexc code."""
     csv_src_path = pjoin(source_path,config['pre_element_source_path'])
-    template_file = basename(config['template_path'])
+    template_file = basename(config['pre_element_template_path'])
     template_dir = pjoin(expanduser(source_path),
-                         dirname(config['template_path']))
+                         dirname(config['pre_element_template_path']))
     env = Environment(loader=FileSystemLoader(template_dir))
     database_src_dirs = config["database_src_dirs"]
     prefix_database = (config["lexical_prefix_database"]

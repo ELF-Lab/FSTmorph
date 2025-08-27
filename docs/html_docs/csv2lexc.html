@@ -126,9 +126,9 @@ matter when concatenating.</p>
             info(f&#34;Writing lexc output to {config[&#39;irregular_lexc_file&#39;]}&#34;)
             irregular_lexicon.write_lexc()
 
-        if config[&#34;template_path&#34;] != &#34;None&#34;:
+        if config[&#34;pre_element_template_path&#34;] != &#34;None&#34;:
             info(&#34;Reading prefix template file from:&#34;,
-                 f&#34;{config[&#39;template_path&#39;]}&#34;)
+                 f&#34;{config[&#39;pre_element_template_path&#39;]}&#34;)
             info(&#34;Reading prefix spreadsheets from directory:&#34;,
                  f&#34;{config[&#39;pre_element_source_path&#39;]}&#34;)
             info(f&#34;Writing lexc output to directory {lexc_path}&#34;)
