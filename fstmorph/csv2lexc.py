@@ -90,7 +90,7 @@ def csv2lexc(config_files, source_path, lexc_path, database_paths, lexical_data_
             info("Reading prefix template file from:",
                  f"{config['template_path']}")
             info("Reading prefix spreadsheets from directory:",
-                 f"{config['pv_source_path']}")
+                 f"{config['pre_element_source_path']}")
             info(f"Writing lexc output to directory {lexc_path}")
             render_pre_element_lexicon(config,source_path,lexc_path)
 

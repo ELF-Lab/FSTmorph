@@ -445,7 +445,7 @@ getting cluttered with loads of unnecessary disallow flags.</p></div>
 </summary>
 <pre><code class="python">def render_pre_element_lexicon(config,source_path,lexc_path):
     &#34;&#34;&#34; Render a preverb or prenoun Jinja template into lexc code.&#34;&#34;&#34;
-    csv_src_path = pjoin(source_path,config[&#39;pv_source_path&#39;])
+    csv_src_path = pjoin(source_path,config[&#39;pre_element_source_path&#39;])
     template_file = basename(config[&#39;template_path&#39;])
     template_dir = pjoin(expanduser(source_path),
                          dirname(config[&#39;template_path&#39;]))
