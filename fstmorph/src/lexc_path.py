@@ -359,8 +359,8 @@ class LexcPath:
                 # Initialize continuation lexicons needed on this path
                 person_prefix_lexicon = f"{paradigm}_Prefix"
                 morpheme_boundary_lexicon = f"{paradigm}_PrefixBoundary"
-                preverb_lexicon = (self.conf["prefix_root"] # This can also be the prenoun lexicon depending on paradigm
-                                   if "prefix_root" in self.conf
+                preverb_lexicon = ((self.conf["pre_element_tag"] + "Root")
+                                   if self.conf["pre_element_tag"]
                                    else None)
                 enclitic_lexicon = "EncliticRoot"
                 pos_stem_lexicon = f"{self.conf['pos']}Stems" # E.g. VerbStems

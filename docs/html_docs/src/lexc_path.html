@@ -503,8 +503,8 @@ SplitForm object is returned.</p></div>
                 # Initialize continuation lexicons needed on this path
                 person_prefix_lexicon = f&#34;{paradigm}_Prefix&#34;
                 morpheme_boundary_lexicon = f&#34;{paradigm}_PrefixBoundary&#34;
-                preverb_lexicon = (self.conf[&#34;prefix_root&#34;] # This can also be the prenoun lexicon depending on paradigm
-                                   if &#34;prefix_root&#34; in self.conf
+                preverb_lexicon = ((self.conf[&#34;pre_element_tag&#34;] + &#34;Root&#34;)
+                                   if self.conf[&#34;pre_element_tag&#34;]
                                    else None)
                 enclitic_lexicon = &#34;EncliticRoot&#34;
                 pos_stem_lexicon = f&#34;{self.conf[&#39;pos&#39;]}Stems&#34; # E.g. VerbStems
@@ -788,8 +788,8 @@ entries.</p></div>
             # Initialize continuation lexicons needed on this path
             person_prefix_lexicon = f&#34;{paradigm}_Prefix&#34;
             morpheme_boundary_lexicon = f&#34;{paradigm}_PrefixBoundary&#34;
-            preverb_lexicon = (self.conf[&#34;prefix_root&#34;] # This can also be the prenoun lexicon depending on paradigm
-                               if &#34;prefix_root&#34; in self.conf
+            preverb_lexicon = ((self.conf[&#34;pre_element_tag&#34;] + &#34;Root&#34;)
+                               if self.conf[&#34;pre_element_tag&#34;]
                                else None)
             enclitic_lexicon = &#34;EncliticRoot&#34;
             pos_stem_lexicon = f&#34;{self.conf[&#39;pos&#39;]}Stems&#34; # E.g. VerbStems
