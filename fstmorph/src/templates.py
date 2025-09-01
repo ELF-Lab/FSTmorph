@@ -241,8 +241,8 @@ def render_pre_element_lexicon(config,source_path,lexc_path):
                          dirname(config['pre_element_template_path']))
     env = Environment(loader=FileSystemLoader(template_dir))
     database_src_dirs = config["database_src_dirs"]
-    prefix_database = (config["lexical_prefix_database"]
-                       if "lexical_prefix_database" in config
+    prefix_database = (config["pre_element_lexical_database"]
+                       if "pre_element_lexical_database" in config
                        else "None")
     jinja_template = env.get_template(template_file)
     func_dict = {
