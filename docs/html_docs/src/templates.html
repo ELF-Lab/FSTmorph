@@ -452,7 +452,7 @@ getting cluttered with loads of unnecessary disallow flags.</p></div>
     env = Environment(loader=FileSystemLoader(template_dir))
     database_src_dirs = config[&#34;database_src_dirs&#34;]
     prefix_database = (config[&#34;pre_element_lexical_database&#34;]
-                       if &#34;pre_element_lexical_database&#34; in config
+                       if config[&#34;pre_element_lexical_database&#34;]
                        else &#34;None&#34;)
     jinja_template = env.get_template(template_file)
     func_dict = {

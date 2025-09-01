@@ -104,7 +104,7 @@ el.replaceWith(d);
         if read_lexical_database:
             self.read_lexemes_from_database(database_paths, lexical_data_to_exclude)
 
-        if add_derivations and &#34;derivational_csv_file&#34; in conf:
+        if add_derivations and conf[&#34;derivational_csv_file&#34;]:
             self.add_derivations()
             
     def read_lexemes_from_database(self, database_paths, lexical_data_to_exclude) -&gt; None:
@@ -151,7 +151,7 @@ el.replaceWith(d);
         # Read through *each* lexical database source
         for database_path in database_paths:
             info(f&#34;Reading external lexical database {self.conf[&#39;lexical_database&#39;]} from directory {database_path}\n&#34;)
-            if self.conf[&#34;lexical_database&#34;] != &#34;None&#34;:
+            if self.conf[&#34;lexical_database&#34;]:
                 lexeme_database = pd.read_csv(os.path.join(database_path,
                                                 self.conf[&#34;lexical_database&#34;]),
                                                 keep_default_na=False)
@@ -337,7 +337,7 @@ def write_multichar_symbols(multichar_symbol_set, lexc_file):
     # Read through *each* lexical database source
     for database_path in database_paths:
         info(f&#34;Reading external lexical database {self.conf[&#39;lexical_database&#39;]} from directory {database_path}\n&#34;)
-        if self.conf[&#34;lexical_database&#34;] != &#34;None&#34;:
+        if self.conf[&#34;lexical_database&#34;]:
             lexeme_database = pd.read_csv(os.path.join(database_path,
                                             self.conf[&#34;lexical_database&#34;]),
                                             keep_default_na=False)

@@ -31,6 +31,25 @@ from fstmorph.src.lexicon import LexcFile
 from fstmorph.src.templates import render_enclitic_lexicon, render_pre_element_lexicon, render_root_lexicon
 from fstmorph.src.log import set_verbose, info
 
+# For consistency, all fields are mandatory (but can be empty, e.g., "" or [])
+CONFIG_FILE_FIELDS = ["pos",
+    "morphology_source_path",
+    "regular_csv_files",
+    "irregular_csv_files",
+    "lexical_database",
+    "regular_lexc_file",
+    "irregular_lexc_file",
+    "morph_features",
+    "missing_tag_marker",
+    "missing_form_marker",
+    "multichar_symbols",
+    "pre_element",
+    "pre_element_template_path",
+    "pre_element_source_path",
+    "pre_element_lexical_database",
+    "derivational_csv_file"
+    ]
+
 # Can be imported into other scripts, or called from the command line via main()
 def csv2lexc(config_files, source_path, lexc_path, database_paths, lexical_data_to_exclude, read_lexical_database, add_derivations, alt_tag, verbose):
     set_verbose(verbose)
@@ -48,51 +67,57 @@ def csv2lexc(config_files, source_path, lexc_path, database_paths, lexical_data_
     for config_file in config_files:
         info(f"Processing configuration file {config_file}:")
         config = json.load(open(config_file))
-        config["database_src_dirs"] = database_paths
-        config["append_alt_tag"] = alt_tag
-        info(json.dumps(config, indent=2),force=False)
-        root_lexicon = config["pos"] + "Root" # "NounRoot", "ProperNounRoot", etc.
-        pos_root_lexicons.add(root_lexicon)
-        
-        # We'll first compile regular paradigms into a LEXC file 
-        info("Reading spreadsheets for regular paradigms from directory:",
-             f"{pjoin(source_path,config['morphology_source_path'])}")
-        lexicon = LexcFile(config,
-                           source_path,
-                           lexc_path,
-                           database_paths,
-                           lexical_data_to_exclude,
-                           read_lexical_database,
-                           add_derivations,
-                           regular=True)
-        info(f"Writing lexc output to {config['regular_lexc_file']}")
-        lexicon.write_lexc()
+        missing_fields = False
+        for config_file_field in CONFIG_FILE_FIELDS:
+            if not(config_file_field in config.keys()):
+                print(f"\nERROR: The config file {config_file} is missing the expected field {config_file_field}. Please add this field (even with an empty value i.e., "") and re-run this script.")
+                missing_fields = True
+        if not(missing_fields):
+            config["database_src_dirs"] = database_paths
+            config["append_alt_tag"] = alt_tag
+            info(json.dumps(config, indent=2),force=False)
+            root_lexicon = config["pos"] + "Root" # "NounRoot", "ProperNounRoot", etc.
+            pos_root_lexicons.add(root_lexicon)
 
-        # We'll then compile irregular paradigms into a different LEXC
-        # file. These need to be separated because, later on, phonological
-        # rules are only applied to regular paradigms.
-        if config['irregular_lexc_file'] != "None":
-            info("Reading spreadsheets for irregular paradigms from directory:",
-                 f"{pjoin(source_path,config['morphology_source_path'])}")
-            pos_root_lexicons.add(root_lexicon + "Irregular")
-            irregular_lexicon = LexcFile(config,
-                                         source_path,
-                                         lexc_path,
-                                         database_paths,
-                                         lexical_data_to_exclude,
-                                         read_lexical_database=False,
-                                         add_derivations=False,
-                                         regular=False)
-            info(f"Writing lexc output to {config['irregular_lexc_file']}")
-            irregular_lexicon.write_lexc()
+            # We'll first compile regular paradigms into a LEXC file
+            info("Reading spreadsheets for regular paradigms from directory:",
+                f"{pjoin(source_path,config['morphology_source_path'])}")
+            lexicon = LexcFile(config,
+                            source_path,
+                            lexc_path,
+                            database_paths,
+                            lexical_data_to_exclude,
+                            read_lexical_database,
+                            add_derivations,
+                            regular=True)
+            info(f"Writing lexc output to {config['regular_lexc_file']}")
+            lexicon.write_lexc()
 
-        if config["pre_element_template_path"] != "None":
-            info("Reading prefix template file from:",
-                 f"{config['pre_element_template_path']}")
-            info("Reading prefix spreadsheets from directory:",
-                 f"{config['pre_element_source_path']}")
-            info(f"Writing lexc output to directory {lexc_path}")
-            render_pre_element_lexicon(config,source_path,lexc_path)
+            # We'll then compile irregular paradigms into a different LEXC
+            # file. These need to be separated because, later on, phonological
+            # rules are only applied to regular paradigms.
+            if config['irregular_lexc_file']:
+                info("Reading spreadsheets for irregular paradigms from directory:",
+                    f"{pjoin(source_path,config['morphology_source_path'])}")
+                pos_root_lexicons.add(root_lexicon + "Irregular")
+                irregular_lexicon = LexcFile(config,
+                                            source_path,
+                                            lexc_path,
+                                            database_paths,
+                                            lexical_data_to_exclude,
+                                            read_lexical_database=False,
+                                            add_derivations=False,
+                                            regular=False)
+                info(f"Writing lexc output to {config['irregular_lexc_file']}")
+                irregular_lexicon.write_lexc()
+
+            if config["pre_element_template_path"]:
+                info("Reading prefix template file from:",
+                    f"{config['pre_element_template_path']}")
+                info("Reading prefix spreadsheets from directory:",
+                    f"{config['pre_element_source_path']}")
+                info(f"Writing lexc output to directory {lexc_path}")
+                render_pre_element_lexicon(config,source_path,lexc_path)
 
     render_enclitic_lexicon(source_path, lexc_path, database_paths)
     render_root_lexicon(pjoin(source_path,"templates","root.lexc.j2"),
