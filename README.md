@@ -18,4 +18,4 @@ That said, this FST-generating code is intended to be applicable for other Algon
 ## Citation
 To cite this work or the contents of the repository in an academic work, please use the following:
 
-> Hammerly, C., Livesay, N., Arppe, A., Stacey, A., & Silfverberg, M. (2026). OjibweMorph: An approachable morphological parser for Ojibwe (and beyond). Language Resources and Evaluation, 60, 1–44. https://doi.org/10.1007/s10579-025-09887-4
+> Hammerly, C., Livesay, N., Arppe, A., Stacey, A., & Silfverberg, M. (2026). OjibweMorph: An approachable finite-state transducer for Ojibwe (and beyond). Language Resources and Evaluation, 60, 1–44. https://doi.org/10.1007/s10579-025-09887-4
