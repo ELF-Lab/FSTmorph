@@ -26,6 +26,9 @@ def check_na(val):
        value is numeric and NaN. False, otherwise.
 
     """    
+def check_na(val):
+    if val in ["NONE", "None", None]:
+        return True
     try:
         return isnan(val)
     except:
@@ -87,7 +90,7 @@ def get_allomorph(pv,order_filter):
                      else pv[order_filter])
     else:
         raise ValueError(f"Unknown order filter {order_filter}")
-    return None if allomorph == None else (canonical, allomorph)
+    return None if check_na(allomorph) else (canonical, allomorph)
 
 def get_load_pre_element_database(source_dirs,prefix_database):
     """Return a function which can be used to load the preverb database
