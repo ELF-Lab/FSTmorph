@@ -8,6 +8,7 @@ requires-python = ">=3.9"
 authors = [
 { name = "Miikka Silfverberg", email = "msilfver@mail.ubc.ca"},
 { name = "Anna Stacey", email = "anna.stacey@ubc.ca"},
+{ name = "Christopher Hammerly", email = "chris.hammerly@ubc.ca"},
 ]
 
 dependencies = [
