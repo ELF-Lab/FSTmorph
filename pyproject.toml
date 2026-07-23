@@ -1,7 +1,7 @@
 [project]
 name = "FSTmorph"
 version = "0.1.2"
-description = ""
+description = "A package for building FST-based morphological analyzers and generators from spreadsheets"
 readme = "README.md"
 requires-python = ">=3.9"
 
