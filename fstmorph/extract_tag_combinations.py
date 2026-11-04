@@ -4,6 +4,7 @@ import click
 import pandas as pd
 import json
 from os.path import join as pjoin
+from fstmorph.src.config import load_config
 from fstmorph.src.log import info
 
 def get_tags(tag_list):
@@ -14,7 +15,7 @@ def get_tags(tag_list):
 # Can be imported into other scripts, or called from the command line via main()
 def extract_tag_combinations(config_file, source_path, pre_element, pre_element_tags, post_element, post_element_tags, output_file):
     info(f"Processing configuration file {config_file}")
-    config = json.load(open(config_file))
+    config = load_config(config_file)
     tags = {}
     
     # Set access order

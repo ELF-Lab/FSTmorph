@@ -27,6 +27,7 @@ import click
 import json
 from os.path import join as pjoin
 
+from fstmorph.src.config import load_config
 from fstmorph.src.lexicon import LexcFile
 from fstmorph.src.templates import render_enclitic_lexicon, render_pre_element_lexicon, render_root_lexicon
 from fstmorph.src.log import set_verbose, info
@@ -47,7 +48,7 @@ def csv2lexc(config_files, source_path, lexc_path, database_paths, lexical_data_
     pos_root_lexicons = set()
     for config_file in config_files:
         info(f"Processing configuration file {config_file}:")
-        config = json.load(open(config_file))
+        config = load_config(config_file)
         config["database_src_dirs"] = database_paths
         config["append_alt_tag"] = alt_tag
         info(json.dumps(config, indent=2),force=False)
@@ -70,7 +71,7 @@ def csv2lexc(config_files, source_path, lexc_path, database_paths, lexical_data_
         # We'll then compile irregular paradigms into a different LEXC
         # file. These need to be separated because, later on, phonological
         # rules are only applied to regular paradigms.
-        if config['irregular_lexc_file'] != "None":
+        if config.get('irregular_lexc_file'):
             info("Reading spreadsheets for irregular paradigms from directory:",
                  f"{pjoin(source_path,config['morphology_source_path'])}")
             config["root_lexicon"] += "Irregular"
@@ -86,7 +87,7 @@ def csv2lexc(config_files, source_path, lexc_path, database_paths, lexical_data_
             info(f"Writing lexc output to {config['irregular_lexc_file']}")
             irregular_lexicon.write_lexc()
 
-        if config["template_path"] != "None":
+        if config.get("template_path"):
             info("Reading prefix template file from:",
                  f"{config['template_path']}")
             info("Reading prefix spreadsheets from directory:",
