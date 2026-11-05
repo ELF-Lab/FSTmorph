@@ -25,7 +25,7 @@
 
 import click
 import json
-from os.path import join as pjoin
+from os.path import basename, join as pjoin
 
 from fstmorph.src.config import load_config
 from fstmorph.src.lexicon import LexcFile
@@ -46,6 +46,9 @@ def csv2lexc(config_files, source_path, lexc_path, database_paths, lexical_data_
     # Collect POS root lexicons like NounRoot and VerbRoot. We need to
     # refer to these from root.lexc
     pos_root_lexicons = set()
+    # Enclitic templates already rendered, so that word classes sharing
+    # one only render it once.  Maps template file name to its inputs.
+    rendered_enclitic_templates = {}
     for config_file in config_files:
         info(f"Processing configuration file {config_file}:")
         config = load_config(config_file)
@@ -96,7 +99,23 @@ def csv2lexc(config_files, source_path, lexc_path, database_paths, lexical_data_
             pos_root_lexicons.add(config["prefix_root"])
             render_pre_element_lexicon(config,source_path,lexc_path)
 
-    render_enclitic_lexicon(source_path, lexc_path, database_paths)
+        if config.get("enclitic_template_path"):
+            enclitic_inputs = (config["enclitic_template_path"],
+                               config["enclitic_source_path"])
+            template_name = basename(config["enclitic_template_path"])
+            previous_inputs = rendered_enclitic_templates.get(template_name)
+            if previous_inputs and previous_inputs != enclitic_inputs:
+                raise ValueError(f"{config_file}: enclitic template "
+                                 f"{template_name} was already rendered "
+                                 f"from different inputs {previous_inputs}")
+            if not previous_inputs:
+                info("Reading enclitic template file from:",
+                     f"{config['enclitic_template_path']}")
+                info("Reading enclitic spreadsheets from directory:",
+                     f"{config['enclitic_source_path']}")
+                rendered_enclitic_templates[template_name] = enclitic_inputs
+                render_enclitic_lexicon(config,source_path,lexc_path)
+
     render_root_lexicon(pjoin(source_path,"templates","root.lexc.j2"),
                         lexc_path)
 

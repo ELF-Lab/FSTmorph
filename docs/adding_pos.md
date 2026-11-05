@@ -74,4 +74,6 @@ Next up: add support for other word types, not just proper nouns.
     - Hardcoded `enclitics.lexc.j2` into `templates.py` as a template that gets converted to a lexc file 1x, à la `root.lexc.j2`.  Just like for `root.lexc`, the generation of this file gets called from `csv2lexc.py` via `render_enclitic_lexicon`.
     - Then in `lexc_path.py`, all endings are set to Enclitic Root.  This ensures that all POS can have enclitics added to their end.  In part this involved adding a reference to `EncliticRoot` to `lexc_path.py`, which acts as a link to the generated `enclitics.lexc` content.
 
+*Update:* enclitics have since been made optional, and are no longer hardcoded.  Each POS config file opts in via `enclitic_root`, `enclitic_template_path` and `enclitic_source_path` (see the configuration file docs in `morphological_source.md`), much like preverbs; a POS whose config omits these has its words end without enclitics.
+
 You can check out these changes in commit [d32a257906dbed1a65726ff8249212c6ef6252ac](https://github.com/ELF-Lab/FSTmorph/commit/d32a257906dbed1a65726ff8249212c6ef6252ac#diff-ae95ce97dce96a9751d98399f939489fafbae1091f2b0e0a2adcf62331916bd7).  Though many edits were made in the process of figuring out how to add these (as described above), in the end, not too many changes were needed to add support for enclitics.

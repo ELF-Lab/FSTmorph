@@ -259,12 +259,14 @@ def render_pre_element_lexicon(config,source_path,lexc_path):
     with open(pjoin(lexc_path, template_file.replace(".j2","")),"w") as f:
         print(template_string, file=f)
 
-def render_enclitic_lexicon(source_path, lexc_path, database_src_dirs):
+def render_enclitic_lexicon(config, source_path, lexc_path):
     """ Render the enclitic Jinja template into lexc code."""
-    csv_src_path = pjoin(source_path, "./OtherSpreadsheets")
-    template_file = "enclitics.lexc.j2"
-    template_dir = pjoin(expanduser(source_path), "templates")
+    csv_src_path = pjoin(source_path, config['enclitic_source_path'])
+    template_file = basename(config['enclitic_template_path'])
+    template_dir = pjoin(expanduser(source_path),
+                         dirname(config['enclitic_template_path']))
     env = Environment(loader=FileSystemLoader(template_dir))
+    database_src_dirs = config["database_src_dirs"]
     prefix_database = None # Could be a file in the lex source
     jinja_template = env.get_template(template_file)
     func_dict = {
@@ -276,8 +278,6 @@ def render_enclitic_lexicon(source_path, lexc_path, database_src_dirs):
         get_load_pre_element_database(database_src_dirs,prefix_database),
         "generate_pre_element_sub_lexicons":
         get_generate_pre_element_sub_lexicons(csv_src_path)
-        # "add_lexeme_multichar_symbols":
-        # get_add_lexeme_multichar_symbols(config)
     }
     jinja_template.globals.update(func_dict)
     template_string = jinja_template.render()
