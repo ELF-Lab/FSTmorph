@@ -31,11 +31,16 @@ OPTIONAL_FIELDS = [
     "prefix_root",
     "template_path",
     "pv_source_path",
+    "enclitic_root",
+    "enclitic_template_path",
+    "enclitic_source_path",
     "derivational_csv_file",
 ]
 
 # Fields that only make sense together: either all are given or none is.
 PRE_ELEMENT_FIELDS = ["template_path", "pv_source_path", "prefix_root"]
+ENCLITIC_FIELDS = ["enclitic_template_path", "enclitic_source_path",
+                   "enclitic_root"]
 
 # Values which older config files used to mean "not specified".
 LEGACY_EMPTY_VALUES = ["", "None", "NONE", None]
@@ -68,10 +73,11 @@ def load_config(config_file):
                  f"omit the field instead.")
             del config[key]
 
-    present = [key for key in PRE_ELEMENT_FIELDS if key in config]
-    if present and len(present) != len(PRE_ELEMENT_FIELDS):
-        raise ValueError(f"{config_file}: {', '.join(PRE_ELEMENT_FIELDS)} "
-                         f"must be given together, but only "
-                         f"{', '.join(present)} present")
+    for field_group in [PRE_ELEMENT_FIELDS, ENCLITIC_FIELDS]:
+        present = [key for key in field_group if key in config]
+        if present and len(present) != len(field_group):
+            raise ValueError(f"{config_file}: {', '.join(field_group)} "
+                             f"must be given together, but only "
+                             f"{', '.join(present)} present")
 
     return config
