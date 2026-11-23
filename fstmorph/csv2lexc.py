@@ -53,7 +53,7 @@ def csv2lexc(config_files, source_path, lexc_path, database_paths, lexical_data_
         config["append_alt_tag"] = alt_tag
         info(json.dumps(config, indent=2),force=False)
         root_lexicon = config["pos"] + "Root" # e.g., "NounRoot", "ProperNounRoot", etc.
-        pos_root_lexicons.add(config["root_lexicon"])
+        pos_root_lexicons.add(root_lexicon)
         
         # We'll first compile regular paradigms into a LEXC file 
         info("Reading spreadsheets for regular paradigms from directory:",
@@ -93,7 +93,7 @@ def csv2lexc(config_files, source_path, lexc_path, database_paths, lexical_data_
             info("Reading prefix spreadsheets from directory:",
                  f"{config['pre_element_source_path']}")
             info(f"Writing lexc output to directory {lexc_path}")
-            pos_root_lexicons.add(config["prefix_root"])
+            pos_root_lexicons.add(config.get("prefix_root"))
             render_pre_element_lexicon(config,source_path,lexc_path)
 
     render_enclitic_lexicon(source_path, lexc_path, database_paths)

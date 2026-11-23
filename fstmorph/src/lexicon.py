@@ -56,7 +56,7 @@ class LexcFile:
         if read_lexical_database:
             self.read_lexemes_from_database(database_paths, lexical_data_to_exclude)
 
-        if add_derivations and conf["derivational_csv_file"]:
+        if add_derivations and self.conf.get("derivational_csv_file"):
             self.add_derivations()
             
     def read_lexemes_from_database(self, database_paths, lexical_data_to_exclude) -> None:

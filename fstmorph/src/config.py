@@ -12,7 +12,6 @@ from fstmorph.src.log import info
 
 REQUIRED_FIELDS = [
     "pos",
-    "root_lexicon",
     "morphology_source_path",
     "regular_csv_files",
     "irregular_csv_files",
