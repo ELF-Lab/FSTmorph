@@ -102,7 +102,7 @@ def get_load_pre_element_database(source_dirs,prefix_database):
         res = ""
         for source_dir in source_dirs:
             paradigm = sub("/$","",pv_tag)
-            if not prefix_database in ["None", None] and not source_dir in ["None", None] :
+            if prefix_database and source_dir:
                 df = pd.read_csv(pjoin(source_dir, prefix_database))
                 for _, pv in df.iterrows():
                     if pv.Paradigm == paradigm:
@@ -241,9 +241,7 @@ def render_pre_element_lexicon(config,source_path,lexc_path):
                          dirname(config['pre_element_template_path']))
     env = Environment(loader=FileSystemLoader(template_dir))
     database_src_dirs = config["database_src_dirs"]
-    prefix_database = (config["pre_element_lexical_database"]
-                       if config["pre_element_lexical_database"]
-                       else "None")
+    prefix_database = config.get("pre_element_lexical_database")
     jinja_template = env.get_template(template_file)
     func_dict = {
         # "all_pre_element_tags":
@@ -268,7 +266,7 @@ def render_enclitic_lexicon(source_path, lexc_path, database_src_dirs):
     template_file = "enclitics.lexc.j2"
     template_dir = pjoin(expanduser(source_path), "templates")
     env = Environment(loader=FileSystemLoader(template_dir))
-    prefix_database = "None" # Could be a file in the lex source
+    prefix_database = None # Could be a file in the lex source
     jinja_template = env.get_template(template_file)
     func_dict = {
         # "all_pre_element_tags":

@@ -6,4 +6,4 @@ csv_output/
 *.csv
 !subj_obj_tags.csv
 *.log
-*~
+*~dist/

@@ -103,7 +103,7 @@ class LexcFile:
         # Read through *each* lexical database source
         for database_path in database_paths:
             info(f"Reading external lexical database {self.conf['lexical_database']} from directory {database_path}\n")
-            if self.conf["lexical_database"]:
+            if self.conf.get("lexical_database"):
                 lexeme_database = pd.read_csv(os.path.join(database_path,
                                                 self.conf["lexical_database"]),
                                                 keep_default_na=False)
