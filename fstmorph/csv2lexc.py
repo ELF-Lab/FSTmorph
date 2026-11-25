@@ -25,7 +25,7 @@
 
 import click
 import json
-from os.path import join as pjoin
+from os.path import basename, join as pjoin
 
 from fstmorph.src.config import load_config
 from fstmorph.src.lexicon import LexcFile
@@ -46,13 +46,17 @@ def csv2lexc(config_files, source_path, lexc_path, database_paths, lexical_data_
     # Collect POS root lexicons like NounRoot and VerbRoot. We need to
     # refer to these from root.lexc
     pos_root_lexicons = set()
+    # Enclitic templates already rendered, so that word classes sharing
+    # one only render it once.  Maps template file name to its inputs.
+    rendered_enclitic_templates = {}
     for config_file in config_files:
         info(f"Processing configuration file {config_file}:")
         config = load_config(config_file)
         config["database_src_dirs"] = database_paths
         config["append_alt_tag"] = alt_tag
         info(json.dumps(config, indent=2),force=False)
-        pos_root_lexicons.add(config["root_lexicon"])
+        root_lexicon = config["pos"] + "Root" # e.g., "NounRoot", "ProperNounRoot", etc.
+        pos_root_lexicons.add(root_lexicon)
         
         # We'll first compile regular paradigms into a LEXC file 
         info("Reading spreadsheets for regular paradigms from directory:",
@@ -74,8 +78,7 @@ def csv2lexc(config_files, source_path, lexc_path, database_paths, lexical_data_
         if config.get('irregular_lexc_file'):
             info("Reading spreadsheets for irregular paradigms from directory:",
                  f"{pjoin(source_path,config['morphology_source_path'])}")
-            config["root_lexicon"] += "Irregular"
-            pos_root_lexicons.add(config["root_lexicon"])
+            pos_root_lexicons.add(root_lexicon + "Irregular")
             irregular_lexicon = LexcFile(config,
                                          source_path,
                                          lexc_path,
@@ -87,18 +90,34 @@ def csv2lexc(config_files, source_path, lexc_path, database_paths, lexical_data_
             info(f"Writing lexc output to {config['irregular_lexc_file']}")
             irregular_lexicon.write_lexc()
 
-        if config.get("template_path"):
+        if config.get("pre_element_template_path"):
             info("Reading prefix template file from:",
-                 f"{config['template_path']}")
+                 f"{config['pre_element_template_path']}")
             info("Reading prefix spreadsheets from directory:",
-                 f"{config['pv_source_path']}")
+                 f"{config['pre_element_source_path']}")
             info(f"Writing lexc output to directory {lexc_path}")
-            pos_root_lexicons.add(config["prefix_root"])
+            pos_root_lexicons.add(config["pre_element"] + "Root")
             render_pre_element_lexicon(config,source_path,lexc_path)
 
-    render_enclitic_lexicon(source_path, lexc_path, database_paths)
+        if config.get("enclitic_template_path"):
+            enclitic_inputs = (config["enclitic_template_path"],
+                               config["enclitic_source_path"])
+            template_name = basename(config["enclitic_template_path"])
+            previous_inputs = rendered_enclitic_templates.get(template_name)
+            if previous_inputs and previous_inputs != enclitic_inputs:
+                raise ValueError(f"{config_file}: enclitic template "
+                                 f"{template_name} was already rendered "
+                                 f"from different inputs {previous_inputs}")
+            if not previous_inputs:
+                info("Reading enclitic template file from:",
+                     f"{config['enclitic_template_path']}")
+                info("Reading enclitic spreadsheets from directory:",
+                     f"{config['enclitic_source_path']}")
+                rendered_enclitic_templates[template_name] = enclitic_inputs
+                render_enclitic_lexicon(config,source_path,lexc_path)
+
     render_root_lexicon(pjoin(source_path,"templates","root.lexc.j2"),
-                        lexc_path)
+                        lexc_path, pos_root_lexicons)
 
 @click.command()
 @click.option('--config-files', required=True, help="JSON config files separated by commas. E.g. verb_conf.json, noun_conf.json")
