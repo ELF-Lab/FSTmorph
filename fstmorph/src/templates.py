@@ -201,25 +201,26 @@ def pretty_join(str_list):
             lines.append(s)
     return "\n".join(lines)
 
-def get_all_pre_element_tags(source_dir):
-    """Return a function which harvests all preverb/prenoun tags from a
-       spreadsheet.  The function can be called from a jinja template
-       file. We need a specialized function because information about
-       file paths is not accessible from the template.
+# 2025/08/26: Don't see this being used. Confirm with Miikka before removing.
+# def get_all_pre_element_tags(source_dir):
+#     """Return a function which harvests all preverb/prenoun tags from a
+#        spreadsheet.  The function can be called from a jinja template
+#        file. We need a specialized function because information about
+#        file paths is not accessible from the template.
 
-    """    
-    def all_pre_element_tags(tag_transformation='lambda x:x'):
-        pre_element_tags = set()
-        tag_transformation = eval(tag_transformation)
-        for fn in listdir(path=source_dir):
-            if fn.endswith(".csv"):
-                df = pd.read_csv(pjoin(source_dir,fn))
-                df.Tag = df.Tag.transform(tag_transformation)
-                pre_element_tags.update(zip(df["Tag"],df["PV"]))
-        pre_element_tags = sorted(list(pre_element_tags))
-        return pretty_join([f"{tag}/{pv}+" for tag, pv in pre_element_tags])
+#     """    
+#     def all_pre_element_tags(tag_transformation='lambda x:x'):
+#         pre_element_tags = set()
+#         tag_transformation = eval(tag_transformation)
+#         for fn in listdir(path=source_dir):
+#             if fn.endswith(".csv"):
+#                 df = pd.read_csv(pjoin(source_dir,fn))
+#                 df.Tag = df.Tag.transform(tag_transformation)
+#                 pre_element_tags.update(zip(df["Tag"],df["PV"]))
+#         pre_element_tags = sorted(list(pre_element_tags))
+#         return pretty_join([f"{tag}/{pv}+" for tag, pv in pre_element_tags])
     
-    return all_pre_element_tags
+#     return all_pre_element_tags
 
 def get_add_lexeme_multichar_symbols(config):
     """Return a function which adds multichar symbols from a config file
@@ -234,17 +235,17 @@ def get_add_lexeme_multichar_symbols(config):
 
 def render_pre_element_lexicon(config,source_path,lexc_path):
     """ Render a preverb or prenoun Jinja template into lexc code."""
-    csv_src_path = pjoin(source_path,config['pv_source_path'])
-    template_file = basename(config['template_path'])
+    csv_src_path = pjoin(source_path,config['pre_element_source_path'])
+    template_file = basename(config['pre_element_template_path'])
     template_dir = pjoin(expanduser(source_path),
-                         dirname(config['template_path']))
+                         dirname(config['pre_element_template_path']))
     env = Environment(loader=FileSystemLoader(template_dir))
     database_src_dirs = config["database_src_dirs"]
-    prefix_database = config.get("lexical_prefix_database")
+    prefix_database = config.get("pre_element_lexical_database")
     jinja_template = env.get_template(template_file)
     func_dict = {
-        "all_pre_element_tags":
-        get_all_pre_element_tags(csv_src_path),
+        # "all_pre_element_tags":
+        # get_all_pre_element_tags(csv_src_path),
         "load_pre_element_csv":
         get_load_pre_element_csv(csv_src_path),
         "load_pre_element_database":
@@ -270,8 +271,8 @@ def render_enclitic_lexicon(config, source_path, lexc_path):
     prefix_database = None # Could be a file in the lex source
     jinja_template = env.get_template(template_file)
     func_dict = {
-        "all_pre_element_tags":
-        get_all_pre_element_tags(csv_src_path),
+        # "all_pre_element_tags":
+        # get_all_pre_element_tags(csv_src_path),
         "load_enclitic_csv":
         get_load_enclitic_csv(csv_src_path),
         "load_pre_element_database":
@@ -295,7 +296,7 @@ def get_add_harvested_multichar_symbols(multichar_symbols):
         return pretty_join(sorted(multichar_symbols))
     return add_harvested_multichar_symbols
 
-def render_root_lexicon(source_path, lexc_path):
+def render_root_lexicon(source_path, lexc_path, pos_root_lexicons):
     """ Render a root lexicon Jinja template into lexc code."""
     template_dir = dirname(expanduser(source_path))
     env = Environment(loader=FileSystemLoader(template_dir))
@@ -307,5 +308,7 @@ def render_root_lexicon(source_path, lexc_path):
     }
     jinja_template.globals.update(func_dict)
     template_string = jinja_template.render()
+    # List all the root lexicons for each POS (one per config file)
+    template_string = template_string.replace("LEXICON Root", "LEXICON Root" + "\n" + (" ;\n").join(pos_root_lexicons) + " ;")
     with open(pjoin(lexc_path, template_file.replace(".j2","")), "w") as f:        
         print(template_string, file=f)

@@ -17,21 +17,6 @@ class LexcFile:
         print(" ".join(multichar_symbols), file=lexc_file)
         print("", file=lexc_file)
 
-    @staticmethod
-    def write_root_lexc(root_lexc_filename,pos_root_lexicons):
-        """Write the `LEXICON Root` into a lexc_file. Each POS has their own
-           custom root lexicon (e.g. VerbRoot and NounRoot) which the
-           master root lexicon needs to reference.
-
-        """
-        with open(root_lexc_filename,"w") as root_lexc_file:
-            LexcFile.write_multichar_symbols(LexcPath.multichar_symbols,
-                                            root_lexc_file)
-            print("LEXICON Root", file=root_lexc_file)
-            for lexicon_name in pos_root_lexicons:
-                print(f"{lexicon_name} ;", file=root_lexc_file)
-            print("", file=root_lexc_file)
-        
     def __init__(self,
                  conf:dict,
                  source_path:str,
@@ -43,7 +28,7 @@ class LexcFile:
                  regular:bool):
         """Initialize the lexicon using a configuration file. Parameters: 
            * `conf` configuration 
-           * `source_path` path to OjibweMorph repo
+           * `source_path` path to morphological source repo (e.g., OjibweMorph)
            * `lexc_path` destination directory for lexc code
            * `database_paths` paths to lexical data CSVs (with lemmas/stems)
            * `lexical_data_to_exclude` path to CSV listing lexical data to NOT include
@@ -51,7 +36,7 @@ class LexcFile:
            * `regular` whether this is a lexc file for regular or irregular lexemes 
         """
         self.conf = conf
-        self.root_lexicon = conf["root_lexicon"]
+        self.root_lexicon = conf["pos"] + "Root"
         self.source_path = source_path        
         self.lexc_path = lexc_path
         self.regular = regular
@@ -71,7 +56,7 @@ class LexcFile:
         if read_lexical_database:
             self.read_lexemes_from_database(database_paths, lexical_data_to_exclude)
 
-        if add_derivations and "derivational_csv_file" in conf:
+        if add_derivations and self.conf.get("derivational_csv_file"):
             self.add_derivations()
             
     def read_lexemes_from_database(self, database_paths, lexical_data_to_exclude) -> None:

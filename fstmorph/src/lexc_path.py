@@ -213,7 +213,7 @@ class LexcPath:
         multichar_symbols.
 
         """
-        self.root_lexicon = conf["root_lexicon"]
+        self.root_lexicon = conf["pos"] + "Root"
         self.row = row
         self.conf = conf
         self.regular = regular
@@ -359,9 +359,10 @@ class LexcPath:
                 # Initialize continuation lexicons needed on this path
                 person_prefix_lexicon = f"{paradigm}_Prefix"
                 morpheme_boundary_lexicon = f"{paradigm}_PrefixBoundary"
-                preverb_lexicon = (self.conf["prefix_root"] # This can also be the prenoun lexicon depending on paradigm
-                                   if "prefix_root" in self.conf
-                                   else None)
+                if self.conf.get("pre_element"):
+                    preverb_lexicon = self.conf["pre_element"] + "Root"
+                else:
+                    preverb_lexicon = None
                 enclitic_lexicon = self.conf.get("enclitic_root")
                 pos_stem_lexicon = f"{self.conf['pos']}Stems" # E.g. VerbStems
                 paradigm_stem_lexicon = f"{paradigm}_Stems" # E.g. VTA_Stems

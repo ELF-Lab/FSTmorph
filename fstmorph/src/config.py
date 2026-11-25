@@ -12,7 +12,6 @@ from fstmorph.src.log import info
 
 REQUIRED_FIELDS = [
     "pos",
-    "root_lexicon",
     "morphology_source_path",
     "regular_csv_files",
     "irregular_csv_files",
@@ -27,20 +26,22 @@ REQUIRED_FIELDS = [
 OPTIONAL_FIELDS = [
     "irregular_lexc_file",
     "lexical_prefix_database",
-    "pre_element_tag",
-    "prefix_root",
-    "template_path",
-    "pv_source_path",
+    "pre_element",
+    "pre_element_template_path",
+    "pre_element_source_path",
+    "pre_element_lexical_database",
+    "derivational_csv_file",
     "enclitic_root",
     "enclitic_template_path",
     "enclitic_source_path",
-    "derivational_csv_file",
 ]
 
 # Fields that only make sense together: either all are given or none is.
-PRE_ELEMENT_FIELDS = ["template_path", "pv_source_path", "prefix_root"]
+PRE_ELEMENT_FIELDS = ["pre_element", "pre_element_template_path",
+                      "pre_element_source_path"]
 ENCLITIC_FIELDS = ["enclitic_template_path", "enclitic_source_path",
                    "enclitic_root"]
+
 
 # Values which older config files used to mean "not specified".
 LEGACY_EMPTY_VALUES = ["", "None", "NONE", None]

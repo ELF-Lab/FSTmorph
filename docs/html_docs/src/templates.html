@@ -129,40 +129,6 @@ to a Jinja template. We need a specialized function because
 information about file paths is not accessible from the
 template.</p></div>
 </dd>
-<dt id="FSTmorph.src.templates.get_all_pre_element_tags"><code class="name flex">
-<span>def <span class="ident">get_all_pre_element_tags</span></span>(<span>source_dir)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_all_pre_element_tags(source_dir):
-    &#34;&#34;&#34;Return a function which harvests all preverb/prenoun tags from a
-       spreadsheet.  The fucntion can be called from a jinja template
-       file. We need a specialized function because information about
-       file paths is not accessible from the template.
-
-    &#34;&#34;&#34;    
-    def all_pre_element_tags(tag_transformation=&#39;lambda x:x&#39;):
-        pre_element_tags = set()
-        tag_transformation = eval(tag_transformation)
-        for fn in listdir(path=source_dir):
-            if fn.endswith(&#34;.csv&#34;):
-                df = pd.read_csv(pjoin(source_dir,fn))
-                df.Tag = df.Tag.transform(tag_transformation)
-                pre_element_tags.update(zip(df[&#34;Tag&#34;],df[&#34;PV&#34;]))
-        pre_element_tags = sorted(list(pre_element_tags))
-        return pretty_join([f&#34;{tag}/{pv}+&#34; for tag, pv in pre_element_tags])
-    
-    return all_pre_element_tags</code></pre>
-</details>
-<div class="desc"><p>Return a function which harvests all preverb/prenoun tags from a
-spreadsheet.
-The fucntion can be called from a jinja template
-file. We need a specialized function because information about
-file paths is not accessible from the template.</p></div>
-</dd>
 <dt id="FSTmorph.src.templates.get_allomorph"><code class="name flex">
 <span>def <span class="ident">get_allomorph</span></span>(<span>pv, order_filter)</span>
 </code></dt>
@@ -274,6 +240,42 @@ PlainConjuct and ChangedConjunct preverb lexicons in a jinja
 template file. We need a specialized function because
 information about file paths is not accessible from the
 template.</p></div>
+</dd>
+<dt id="FSTmorph.src.templates.get_load_enclitic_csv"><code class="name flex">
+<span>def <span class="ident">get_load_enclitic_csv</span></span>(<span>source_dir)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_load_enclitic_csv(source_dir):
+    &#34;&#34;&#34;Return a function which can be used to load the enclitic spreadsheet
+       from a jinja template file. We need a specialized function because
+       information about file paths is not accessible from the template.
+
+    &#34;&#34;&#34;
+    def load_enclitic_csv(sources, next_lexicon):
+        entries = []
+        for csv_fn, general_tag in sources:
+            enclitic_csv = pd.read_csv(pjoin(source_dir, csv_fn))
+            for _, clitic in enclitic_csv.iterrows():
+                full_form = clitic[&#34;Full_Form&#34;]
+                clitic_form = clitic[&#34;Clitic_Form&#34;]
+                if full_form and clitic_form and full_form != &#34;NONE&#34; and clitic_form != &#34;NONE&#34;:
+                    tag = general_tag + clitic[&#34;POS&#34;] + &#34;/&#34; + full_form
+                    # We need to define the enclitic tag as a multichar symbol
+                    LexcPath.multichar_symbols.add(f&#34;{escape(tag)}+&#34;)
+                    entries.append(
+                        f&#34;+{escape(tag)}:{escape(clitic_form)} {next_lexicon} ;&#34;)
+        if entries == []:
+            entries = [&#34;%&lt;EMPTYLEX%&gt; # ;&#34;]
+        return &#34;\n&#34;.join(entries)
+    return load_enclitic_csv</code></pre>
+</details>
+<div class="desc"><p>Return a function which can be used to load the enclitic spreadsheet
+from a jinja template file. We need a specialized function because
+information about file paths is not accessible from the template.</p></div>
 </dd>
 <dt id="FSTmorph.src.templates.get_load_pre_element_csv"><code class="name flex">
 <span>def <span class="ident">get_load_pre_element_csv</span></span>(<span>source_dir)</span>
@@ -398,6 +400,41 @@ getting cluttered with loads of unnecessary disallow flags.</p></div>
 </details>
 <div class="desc"><p>Split a string into lines of 80 characters at white space</p></div>
 </dd>
+<dt id="FSTmorph.src.templates.render_enclitic_lexicon"><code class="name flex">
+<span>def <span class="ident">render_enclitic_lexicon</span></span>(<span>source_path, lexc_path, database_src_dirs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def render_enclitic_lexicon(source_path, lexc_path, database_src_dirs):
+    &#34;&#34;&#34; Render the enclitic Jinja template into lexc code.&#34;&#34;&#34;
+    csv_src_path = pjoin(source_path, &#34;./OtherSpreadsheets&#34;)
+    template_file = &#34;enclitics.lexc.j2&#34;
+    template_dir = pjoin(expanduser(source_path), &#34;templates&#34;)
+    env = Environment(loader=FileSystemLoader(template_dir))
+    prefix_database = &#34;None&#34; # Could be a file in the lex source
+    jinja_template = env.get_template(template_file)
+    func_dict = {
+        # &#34;all_pre_element_tags&#34;:
+        # get_all_pre_element_tags(csv_src_path),
+        &#34;load_enclitic_csv&#34;:
+        get_load_enclitic_csv(csv_src_path),
+        &#34;load_pre_element_database&#34;:
+        get_load_pre_element_database(database_src_dirs,prefix_database),
+        &#34;generate_pre_element_sub_lexicons&#34;:
+        get_generate_pre_element_sub_lexicons(csv_src_path)
+        # &#34;add_lexeme_multichar_symbols&#34;:
+        # get_add_lexeme_multichar_symbols(config)
+    }
+    jinja_template.globals.update(func_dict)
+    template_string = jinja_template.render()
+    with open(pjoin(lexc_path, template_file.replace(&#34;.j2&#34;,&#34;&#34;)),&#34;w&#34;) as f:
+        print(template_string, file=f)</code></pre>
+</details>
+<div class="desc"><p>Render the enclitic Jinja template into lexc code.</p></div>
+</dd>
 <dt id="FSTmorph.src.templates.render_pre_element_lexicon"><code class="name flex">
 <span>def <span class="ident">render_pre_element_lexicon</span></span>(<span>config, source_path, lexc_path)</span>
 </code></dt>
@@ -408,19 +445,19 @@ getting cluttered with loads of unnecessary disallow flags.</p></div>
 </summary>
 <pre><code class="python">def render_pre_element_lexicon(config,source_path,lexc_path):
     &#34;&#34;&#34; Render a preverb or prenoun Jinja template into lexc code.&#34;&#34;&#34;
-    csv_src_path = pjoin(source_path,config[&#39;pv_source_path&#39;])
-    template_file = basename(config[&#39;template_path&#39;])
+    csv_src_path = pjoin(source_path,config[&#39;pre_element_source_path&#39;])
+    template_file = basename(config[&#39;pre_element_template_path&#39;])
     template_dir = pjoin(expanduser(source_path),
-                         dirname(config[&#39;template_path&#39;]))
+                         dirname(config[&#39;pre_element_template_path&#39;]))
     env = Environment(loader=FileSystemLoader(template_dir))
     database_src_dirs = config[&#34;database_src_dirs&#34;]
-    prefix_database = (config[&#34;lexical_prefix_database&#34;]
-                       if &#34;lexical_prefix_database&#34; in config
+    prefix_database = (config[&#34;pre_element_lexical_database&#34;]
+                       if config[&#34;pre_element_lexical_database&#34;]
                        else &#34;None&#34;)
     jinja_template = env.get_template(template_file)
     func_dict = {
-        &#34;all_pre_element_tags&#34;:
-        get_all_pre_element_tags(csv_src_path),
+        # &#34;all_pre_element_tags&#34;:
+        # get_all_pre_element_tags(csv_src_path),
         &#34;load_pre_element_csv&#34;:
         get_load_pre_element_csv(csv_src_path),
         &#34;load_pre_element_database&#34;:
@@ -438,14 +475,14 @@ getting cluttered with loads of unnecessary disallow flags.</p></div>
 <div class="desc"><p>Render a preverb or prenoun Jinja template into lexc code.</p></div>
 </dd>
 <dt id="FSTmorph.src.templates.render_root_lexicon"><code class="name flex">
-<span>def <span class="ident">render_root_lexicon</span></span>(<span>source_path, lexc_path)</span>
+<span>def <span class="ident">render_root_lexicon</span></span>(<span>source_path, lexc_path, pos_root_lexicons)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def render_root_lexicon(source_path, lexc_path):
+<pre><code class="python">def render_root_lexicon(source_path, lexc_path, pos_root_lexicons):
     &#34;&#34;&#34; Render a root lexicon Jinja template into lexc code.&#34;&#34;&#34;
     template_dir = dirname(expanduser(source_path))
     env = Environment(loader=FileSystemLoader(template_dir))
@@ -457,6 +494,8 @@ getting cluttered with loads of unnecessary disallow flags.</p></div>
     }
     jinja_template.globals.update(func_dict)
     template_string = jinja_template.render()
+    # List all the root lexicons for each POS (one per config file)
+    template_string = template_string.replace(&#34;LEXICON Root&#34;, &#34;LEXICON Root&#34; + &#34;\n&#34; + (&#34; ;\n&#34;).join(pos_root_lexicons) + &#34; ;&#34;)
     with open(pjoin(lexc_path, template_file.replace(&#34;.j2&#34;,&#34;&#34;)), &#34;w&#34;) as f:        
         print(template_string, file=f)</code></pre>
 </details>
@@ -488,13 +527,14 @@ getting cluttered with loads of unnecessary disallow flags.</p></div>
 <li><code><a title="FSTmorph.src.templates.check_na" href="#FSTmorph.src.templates.check_na">check_na</a></code></li>
 <li><code><a title="FSTmorph.src.templates.get_add_harvested_multichar_symbols" href="#FSTmorph.src.templates.get_add_harvested_multichar_symbols">get_add_harvested_multichar_symbols</a></code></li>
 <li><code><a title="FSTmorph.src.templates.get_add_lexeme_multichar_symbols" href="#FSTmorph.src.templates.get_add_lexeme_multichar_symbols">get_add_lexeme_multichar_symbols</a></code></li>
-<li><code><a title="FSTmorph.src.templates.get_all_pre_element_tags" href="#FSTmorph.src.templates.get_all_pre_element_tags">get_all_pre_element_tags</a></code></li>
 <li><code><a title="FSTmorph.src.templates.get_allomorph" href="#FSTmorph.src.templates.get_allomorph">get_allomorph</a></code></li>
 <li><code><a title="FSTmorph.src.templates.get_generate_pre_element_sub_lexicons" href="#FSTmorph.src.templates.get_generate_pre_element_sub_lexicons">get_generate_pre_element_sub_lexicons</a></code></li>
+<li><code><a title="FSTmorph.src.templates.get_load_enclitic_csv" href="#FSTmorph.src.templates.get_load_enclitic_csv">get_load_enclitic_csv</a></code></li>
 <li><code><a title="FSTmorph.src.templates.get_load_pre_element_csv" href="#FSTmorph.src.templates.get_load_pre_element_csv">get_load_pre_element_csv</a></code></li>
 <li><code><a title="FSTmorph.src.templates.get_load_pre_element_database" href="#FSTmorph.src.templates.get_load_pre_element_database">get_load_pre_element_database</a></code></li>
 <li><code><a title="FSTmorph.src.templates.get_plain_conjunct" href="#FSTmorph.src.templates.get_plain_conjunct">get_plain_conjunct</a></code></li>
 <li><code><a title="FSTmorph.src.templates.pretty_join" href="#FSTmorph.src.templates.pretty_join">pretty_join</a></code></li>
+<li><code><a title="FSTmorph.src.templates.render_enclitic_lexicon" href="#FSTmorph.src.templates.render_enclitic_lexicon">render_enclitic_lexicon</a></code></li>
 <li><code><a title="FSTmorph.src.templates.render_pre_element_lexicon" href="#FSTmorph.src.templates.render_pre_element_lexicon">render_pre_element_lexicon</a></code></li>
 <li><code><a title="FSTmorph.src.templates.render_root_lexicon" href="#FSTmorph.src.templates.render_root_lexicon">render_root_lexicon</a></code></li>
 </ul>

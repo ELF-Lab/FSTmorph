@@ -55,7 +55,8 @@ def csv2lexc(config_files, source_path, lexc_path, database_paths, lexical_data_
         config["database_src_dirs"] = database_paths
         config["append_alt_tag"] = alt_tag
         info(json.dumps(config, indent=2),force=False)
-        pos_root_lexicons.add(config["root_lexicon"])
+        root_lexicon = config["pos"] + "Root" # e.g., "NounRoot", "ProperNounRoot", etc.
+        pos_root_lexicons.add(root_lexicon)
         
         # We'll first compile regular paradigms into a LEXC file 
         info("Reading spreadsheets for regular paradigms from directory:",
@@ -77,8 +78,7 @@ def csv2lexc(config_files, source_path, lexc_path, database_paths, lexical_data_
         if config.get('irregular_lexc_file'):
             info("Reading spreadsheets for irregular paradigms from directory:",
                  f"{pjoin(source_path,config['morphology_source_path'])}")
-            config["root_lexicon"] += "Irregular"
-            pos_root_lexicons.add(config["root_lexicon"])
+            pos_root_lexicons.add(root_lexicon + "Irregular")
             irregular_lexicon = LexcFile(config,
                                          source_path,
                                          lexc_path,
@@ -90,13 +90,13 @@ def csv2lexc(config_files, source_path, lexc_path, database_paths, lexical_data_
             info(f"Writing lexc output to {config['irregular_lexc_file']}")
             irregular_lexicon.write_lexc()
 
-        if config.get("template_path"):
+        if config.get("pre_element_template_path"):
             info("Reading prefix template file from:",
-                 f"{config['template_path']}")
+                 f"{config['pre_element_template_path']}")
             info("Reading prefix spreadsheets from directory:",
-                 f"{config['pv_source_path']}")
+                 f"{config['pre_element_source_path']}")
             info(f"Writing lexc output to directory {lexc_path}")
-            pos_root_lexicons.add(config["prefix_root"])
+            pos_root_lexicons.add(config["pre_element"] + "Root")
             render_pre_element_lexicon(config,source_path,lexc_path)
 
         if config.get("enclitic_template_path"):
@@ -117,7 +117,7 @@ def csv2lexc(config_files, source_path, lexc_path, database_paths, lexical_data_
                 render_enclitic_lexicon(config,source_path,lexc_path)
 
     render_root_lexicon(pjoin(source_path,"templates","root.lexc.j2"),
-                        lexc_path)
+                        lexc_path, pos_root_lexicons)
 
 @click.command()
 @click.option('--config-files', required=True, help="JSON config files separated by commas. E.g. verb_conf.json, noun_conf.json")
