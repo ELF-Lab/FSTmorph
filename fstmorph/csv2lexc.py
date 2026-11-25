@@ -93,7 +93,7 @@ def csv2lexc(config_files, source_path, lexc_path, database_paths, lexical_data_
             info("Reading prefix spreadsheets from directory:",
                  f"{config['pre_element_source_path']}")
             info(f"Writing lexc output to directory {lexc_path}")
-            pos_root_lexicons.add(config.get("prefix_root"))
+            pos_root_lexicons.add(config["pre_element"] + "Root")
             render_pre_element_lexicon(config,source_path,lexc_path)
 
     render_enclitic_lexicon(source_path, lexc_path, database_paths)
