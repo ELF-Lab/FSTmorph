@@ -363,7 +363,7 @@ class LexcPath:
                     preverb_lexicon = self.conf["pre_element"] + "Root"
                 else:
                     preverb_lexicon = None
-                enclitic_lexicon = "EncliticRoot"
+                enclitic_lexicon = self.conf.get("enclitic_root")
                 pos_stem_lexicon = f"{self.conf['pos']}Stems" # E.g. VerbStems
                 paradigm_stem_lexicon = f"{paradigm}_Stems" # E.g. VTA_Stems
                 inflection_class_lexicon = f"{paradigm}_Class={klass}_Boundary"
